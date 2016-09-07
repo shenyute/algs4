@@ -41,24 +41,29 @@ public class PercolationStats {
   {
     double u = mean();
     double a = stddev();
-    return u - 1.96 * u / Math.sqrt(mTrials);
+    return u - 1.96 * a / Math.sqrt(mTrials);
   }
 
   public double confidenceHi()                  // high endpoint of 95% confidence interval
   {
     double u = mean();
     double a = stddev();
-    return u + 1.96 * u / Math.sqrt(mTrials);
+    return u + 1.96 * a / Math.sqrt(mTrials);
   }
 
   public static void main(String[] args)    // test client (described below)
   {
-    int n = Integer.parseInt(args[0]);
-    int trials = Integer.parseInt(args[1]);
-    PercolationStats stats = new PercolationStats(n, trials);
-    StdOut.println("mean                     = " + stats.mean());
-    StdOut.println("stddev                   = " + stats.stddev());
-    StdOut.println("95% confidence interval  = " + stats.confidenceLo() + ", " + stats.confidenceHi());
+    try {
+      int n = Integer.parseInt(args[0]);
+      int trials = Integer.parseInt(args[1]);
+      PercolationStats stats = new PercolationStats(n, trials);
+      StdOut.println("mean                     = " + stats.mean());
+      StdOut.println("stddev                   = " + stats.stddev());
+      StdOut.println("95% confidence interval  = " + stats.confidenceLo() + ", " + stats.confidenceHi());
+    } catch (NumberFormatException e) {
+      StdOut.println("Argument must be an integer");
+      return;
+    }
   }
 
   private double[] mThreshold;
