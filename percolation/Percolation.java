@@ -1,27 +1,11 @@
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
-  private int positionToIndex(int i, int j)
-  {
-    assert i>0 && i <= mGridSize;
-    assert j>0 && j <= mGridSize;
-    return 1 + (i-1) * mGridSize + (j-1); // from 1~n*n
-  }
+  private WeightedQuickUnionUF mUnionFind;
+  private int mGridSize;
+  private boolean[][] mSites;
 
-  private boolean inside(int i, int j)
-  {
-    if (i < 1 || i > mGridSize || j < 1 || j > mGridSize)
-      return false;
-    return true;
-  }
-
-  private void connect(int p, int q)
-  {
-    mUnionFind.union(p, q);
-    //System.out.println(p +"->" +q);
-  }
-
-  public Percolation(int n)               // create n-by-n grid, with all sites blocked
+  public Percolation(int n)
   {
     if (n < 0)
       throw new java.lang.IllegalArgumentException("");
@@ -45,7 +29,27 @@ public class Percolation {
     }
   }
 
-  public void open(int i, int j)          // open site (row i, column j) if it is not open already
+  private int positionToIndex(int i, int j)
+  {
+    assert i > 0 && i <= mGridSize;
+    assert j > 0 && j <= mGridSize;
+    return 1 + (i-1) * mGridSize + (j-1); // from 1~n*n
+  }
+
+  private boolean inside(int i, int j)
+  {
+    if (i < 1 || i > mGridSize || j < 1 || j > mGridSize)
+      return false;
+    return true;
+  }
+
+  private void connect(int p, int q)
+  {
+    mUnionFind.union(p, q);
+    //System.out.println(p +"->" +q);
+  }
+
+  public void open(int i, int j)
   {
     if (!inside(i, j))
       throw new java.lang.IndexOutOfBoundsException("");
@@ -61,46 +65,43 @@ public class Percolation {
       connect(positionToIndex(i+1, j), target);
   }
 
-  public boolean isOpen(int i, int j)     // is site (row i, column j) open?
+  public boolean isOpen(int i, int j)
   {
     if (!inside(i, j))
       throw new java.lang.IndexOutOfBoundsException("");
     return mSites[i][j];
   }
 
-  public boolean isFull(int i, int j)     // is site (row i, column j) full?
+  public boolean isFull(int i, int j)
   {
     if (!inside(i, j))
       throw new java.lang.IndexOutOfBoundsException("");
     int target = positionToIndex(i, j);
-    return mUnionFind.connected(0, target) && mUnionFind.connected(target, mGridSize*mGridSize+1);
+    return mUnionFind.connected(0, target)
+       && mUnionFind.connected(target, mGridSize*mGridSize+1);
   }
 
-  public boolean percolates()             // does the system percolate?
+  public boolean percolates()
   {
     return mUnionFind.connected(0, mGridSize*mGridSize+1);
   }
 
-  public static void main(String[] args)  // test client (optional)
+  public static void main(String[] args)
   {
     Percolation percolation = new Percolation(3);
     percolation.open(1, 1);
     percolation.open(2, 1);
     percolation.open(2, 2);
-    assert percolation.percolates() == false;
-    assert percolation.isFull(1, 1) == false;
-    assert percolation.isFull(2, 1) == false;
-    assert percolation.isFull(2, 2) == false;
-    assert percolation.isFull(3, 2) == false;
+    assert !percolation.percolates();
+    assert !percolation.isFull(1, 1);
+    assert !percolation.isFull(2, 1);
+    assert !percolation.isFull(2, 2);
+    assert !percolation.isFull(3, 2);
     percolation.open(3, 2);
-    assert percolation.isFull(1, 1) == true;
-    assert percolation.isFull(2, 1) == true;
-    assert percolation.isFull(2, 2) == true;
-    assert percolation.isFull(3, 2) == true;
-    assert percolation.percolates() == true;
+    assert percolation.isFull(1, 1);
+    assert percolation.isFull(2, 1);
+    assert percolation.isFull(2, 2);
+    assert percolation.isFull(3, 2);
+    assert percolation.percolates();
   }
-
-  private WeightedQuickUnionUF mUnionFind;
-  private int mGridSize;
-  private boolean[][] mSites;
 }
