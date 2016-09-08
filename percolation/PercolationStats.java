@@ -25,7 +25,7 @@ public class PercolationStats {
         }
       }
       mThreshold[trial] = 1.0 * openSites / totalSites;
-      //System.out.println("frac=" + mThreshold[trial]);
+      // System.out.println("frac=" + mThreshold[trial]);
     }
   }
 

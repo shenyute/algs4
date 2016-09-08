@@ -46,13 +46,15 @@ public class Percolation {
   private void connect(int p, int q)
   {
     mUnionFind.union(p, q);
-    //System.out.println(p +"->" +q);
+    // System.out.println(p +"->" +q);
   }
 
   public void open(int i, int j)
   {
     if (!inside(i, j))
       throw new java.lang.IndexOutOfBoundsException("");
+    if (isOpen(i, j))
+      return;
     mSites[i][j] = true;
     int target = positionToIndex(i, j);
     if (inside(i-1, j) && isOpen(i-1, j))
@@ -77,8 +79,9 @@ public class Percolation {
     if (!inside(i, j))
       throw new java.lang.IndexOutOfBoundsException("");
     int target = positionToIndex(i, j);
-    return mUnionFind.connected(0, target)
-       && mUnionFind.connected(target, mGridSize*mGridSize+1);
+    return isOpen(i, j)
+        &&mUnionFind.find(0) == mUnionFind.find(target)
+        && mUnionFind.connected(0,  mGridSize*mGridSize+1);
   }
 
   public boolean percolates()
@@ -88,20 +91,56 @@ public class Percolation {
 
   public static void main(String[] args)
   {
-    Percolation percolation = new Percolation(3);
-    percolation.open(1, 1);
-    percolation.open(2, 1);
+    Percolation percolation = new Percolation(6);
+    assert !percolation.isFull(1, 6);
+    percolation.open(1, 6);
+    assert !percolation.percolates();
+    assert !percolation.isFull(1, 6);
+    assert percolation.isOpen(1, 6);
+    percolation.open(2, 6);
+    assert percolation.isOpen(2, 6);
+    assert !percolation.isFull(2, 6);
+    assert !percolation.percolates();
+    percolation.open(3, 6);
+    assert percolation.isOpen(2, 6);
+    assert !percolation.isFull(2, 6);
+    assert percolation.isOpen(3, 6);
+    assert !percolation.isFull(3, 6);
+    assert !percolation.percolates();
+    percolation.open(4, 6);
+    assert !percolation.percolates();
+    percolation.open(5, 6);
+    assert !percolation.percolates();
+    percolation.open(5, 5);
+    assert !percolation.percolates();
+    percolation.open(4, 4);
+    assert !percolation.percolates();
+    percolation.open(3, 4);
+    assert !percolation.percolates();
+    percolation.open(2, 4);
+    assert !percolation.percolates();
+    percolation.open(2, 3);
+    assert !percolation.percolates();
     percolation.open(2, 2);
     assert !percolation.percolates();
-    assert !percolation.isFull(1, 1);
-    assert !percolation.isFull(2, 1);
-    assert !percolation.isFull(2, 2);
-    assert !percolation.isFull(3, 2);
-    percolation.open(3, 2);
-    assert percolation.isFull(1, 1);
-    assert percolation.isFull(2, 1);
-    assert percolation.isFull(2, 2);
-    assert percolation.isFull(3, 2);
+    percolation.open(2, 1);
+    assert !percolation.percolates();
+    percolation.open(2, 1);
+    assert !percolation.percolates();
+    percolation.open(3, 1);
+    assert !percolation.percolates();
+    percolation.open(4, 1);
+    assert !percolation.percolates();
+    percolation.open(5, 1);
+    assert !percolation.percolates();
+    percolation.open(5, 2);
+    assert !percolation.percolates();
+    percolation.open(6, 2);
+    assert !percolation.percolates();
+    percolation.open(5, 4);
+    assert percolation.isFull(1, 6);
+    assert !percolation.isOpen(6, 1);
+    assert !percolation.isFull(6, 1);
     assert percolation.percolates();
   }
 }
