@@ -7,6 +7,7 @@ public class Percolation {
   private WeightedQuickUnionUF mIsFull;
   private int mGridSize;
   private boolean[][] mSites;
+  private boolean mIsPercolates;
 
   public Percolation(int n)
   {
@@ -16,7 +17,7 @@ public class Percolation {
     // 0 connect to (row 0, column j) where j = 0~n-1
     // n*n+1  connect to (row n-1, column j) where j = 0~n-1
     mUnionFind = new WeightedQuickUnionUF(n*n + 2);
-    mIsFull = new WeightedQuickUnionUF(n*n + 2);
+    mIsFull = new WeightedQuickUnionUF(n*n + 1);
     mGridSize = n;
     // initialize all sites are disconnected.
     mSites = new boolean[n+2][n+2];
@@ -62,6 +63,7 @@ public class Percolation {
       throw new java.lang.IndexOutOfBoundsException("");
     if (isOpen(i, j))
       return;
+    assert !mSites[i][j];
     mSites[i][j] = true;
     int target = positionToIndex(i, j);
     if (inside(i-1, j) && isOpen(i-1, j))
@@ -94,7 +96,10 @@ public class Percolation {
   {
     if (mGridSize == 1)
       return isOpen(1, 1);
-    return mUnionFind.connected(0, mGridSize * mGridSize + 1);
+    if (mIsPercolates)
+      return true;
+    mIsPercolates = mUnionFind.connected(0, mGridSize * mGridSize + 1);
+    return mIsPercolates;
   }
 
   public static void main(String[] args)
@@ -154,6 +159,13 @@ public class Percolation {
     assert !percolation1.isFull(1, 1);
     assert !percolation1.isOpen(1, 1);
     assert !percolation1.percolates();
+    percolation1.open(1, 1);
+    percolation1.open(1, 1);
+    percolation1.open(1, 1);
+    percolation1.open(1, 1);
+    percolation1.open(1, 1);
+    percolation1.open(1, 1);
+    percolation1.open(1, 1);
     percolation1.open(1, 1);
     assert percolation1.isFull(1, 1);
     assert percolation1.isOpen(1, 1);
