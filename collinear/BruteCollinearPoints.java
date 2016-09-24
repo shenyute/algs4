@@ -5,23 +5,22 @@ import java.util.Arrays;
 import java.util.ArrayList;
 
 public class BruteCollinearPoints {
-  private LineSegment[] mLines;
-  private int mLineNum;
+  private ArrayList<LineSegment> mLines;
 
-  public BruteCollinearPoints(Point[] points) {
-    if (points == null)
+  public BruteCollinearPoints(Point[] input) {
+    if (input == null)
       throw new java.lang.NullPointerException("null array");
-    for (int i = 0; i < points.length; i++) {
-      if (points[i] == null)
+    for (int i = 0; i < input.length; i++) {
+      if (input[i] == null)
         throw new java.lang.NullPointerException("null point");
     }
-    ArrayList<LineSegment> lines = new ArrayList<>();
+    Point[] points = Arrays.copyOf(input, input.length);
+    mLines = new ArrayList<>();
     Arrays.sort(points);
     for (int i = 1; i < points.length; i++) {
-      if (points[i] == points[i-1])
+      if (points[i].compareTo(points[i-1]) == 0)
         throw new java.lang.IllegalArgumentException("repeated point");
     }
-    mLineNum = 0;
     // run all combination
     for (int i = 0; i < points.length; i++)
       for (int j = i + 1; j < points.length; j++)
@@ -29,20 +28,19 @@ public class BruteCollinearPoints {
           for (int l = k + 1; l < points.length; l++) {
             if (points[i].slopeTo(points[j]) == points[i].slopeTo(points[k])
                 && points[i].slopeTo(points[k]) == points[i].slopeTo(points[l]))
-              lines.add(new LineSegment(points[i], points[l]));
+              mLines.add(new LineSegment(points[i], points[l]));
           }
-    mLines = new LineSegment[lines.size()];
-    mLineNum = lines.size();
-    for (int i = 0; i < mLineNum; i++)
-      mLines[i] = lines.get(i);
   }
 
   public int numberOfSegments() {
-    return mLineNum;
+    return mLines.size();
   }
 
   public LineSegment[] segments() {
-    return mLines;
+    LineSegment[] lines = new LineSegment[mLines.size()];
+    for (int i = 0; i < mLines.size(); i++)
+      lines[i] = mLines.get(i);
+    return lines;
   }
 
   public static void main(String[] args) {

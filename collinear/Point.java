@@ -64,6 +64,8 @@ public class Point implements Comparable<Point> {
           return Double.NEGATIVE_INFINITY;
         return Double.POSITIVE_INFINITY;
       }
+      if (that.y == this.y)
+        return 0;
       return 1.0 * (that.y - this.y) / (that.x - this.x);
     }
 
@@ -94,7 +96,7 @@ public class Point implements Comparable<Point> {
     }
 
     private static class BySlopeOrder implements Comparator<Point> {
-      Point base;
+      private Point base;
       public BySlopeOrder(Point base) {
         this.base = base;
       }
